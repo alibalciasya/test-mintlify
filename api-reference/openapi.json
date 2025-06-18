@@ -1,0 +1,536 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "MyAPI",
+    "version": "v3"
+  },
+  "paths": {
+    "/api/penalty/operator/{operatorId}/game/{gameId}/accounts": {
+      "get": {
+        "tags": [
+          "Account"
+        ],
+        "summary": "Retrieves user details for a specified user token.",
+        "description": "Request body example:\r\n    GET /api/user-info",
+        "parameters": [
+          {
+            "name": "operatorId",
+            "in": "path",
+            "description": "Operator ID from the route",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "gameId",
+            "in": "path",
+            "description": "game ID from the route",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "User information retrieved successfully.",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserInfoDto"
+                },
+                "examples": {
+                  "Demo User": {
+                    "value": {"username":"demo-user","balance":1250.75}
+                  },
+                  "Zero Balance": {
+                    "value": {"username":"empty-wallet","balance":0}
+                  },
+                  "High Roller": {
+                    "value": {"username":"big-player","balance":99999.99}
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserInfoDto"
+                },
+                "examples": {
+                  "Demo User": {
+                    "value": {"username":"demo-user","balance":1250.75}
+                  },
+                  "Zero Balance": {
+                    "value": {"username":"empty-wallet","balance":0}
+                  },
+                  "High Roller": {
+                    "value": {"username":"big-player","balance":99999.99}
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserInfoDto"
+                },
+                "examples": {
+                  "Demo User": {
+                    "value": {"username":"demo-user","balance":1250.75}
+                  },
+                  "Zero Balance": {
+                    "value": {"username":"empty-wallet","balance":0}
+                  },
+                  "High Roller": {
+                    "value": {"username":"big-player","balance":99999.99}
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Account not found."
+          },
+          "401": {
+            "description": "Unauthorized access."
+          },
+          "400": {
+            "description": "Operator or Game ID mismatch."
+          }
+        }
+      }
+    },
+    "/api/penalty/operator/{operatorId}/game/{gameId}/bets": {
+      "get": {
+        "tags": [
+          "Bet"
+        ],
+        "summary": "Get betting history information for a user.",
+        "parameters": [
+          {
+            "name": "operatorId",
+            "in": "path",
+            "description": "Operator ID from the route",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "gameId",
+            "in": "path",
+            "description": "game ID from the route",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Returns the bet history information successfully.",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/BetHistoryResponse"
+                },
+                "examples": {
+                  "Basic History": {
+                    "value": {"bets":[{"id":"79d5ccdac7b53f9a7fd858a0f3eb0c25","type":1,"amount":100,"number":7,"isWin":true,"createdAt":1714500000}]}
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BetHistoryResponse"
+                },
+                "examples": {
+                  "Basic History": {
+                    "value": {"bets":[{"id":"79d5ccdac7b53f9a7fd858a0f3eb0c25","type":1,"amount":100,"number":7,"isWin":true,"createdAt":1714500000}]}
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BetHistoryResponse"
+                },
+                "examples": {
+                  "Basic History": {
+                    "value": {"bets":[{"id":"79d5ccdac7b53f9a7fd858a0f3eb0c25","type":1,"amount":100,"number":7,"isWin":true,"createdAt":1714500000}]}
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Indicates that the user is unauthorized to access the bet history information."
+          },
+          "404": {
+            "description": "Indicates that the bet history information was not found."
+          },
+          "400": {
+            "description": "Operator or Game ID mismatch."
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Bet"
+        ],
+        "summary": "Places a bet.",
+        "parameters": [
+          {
+            "name": "operatorId",
+            "in": "path",
+            "description": "Operator ID from the route",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "gameId",
+            "in": "path",
+            "description": "Game ID from the route",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "The command object containing the bet details.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PlaceBetCommand"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PlaceBetCommand"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/PlaceBetCommand"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Indicates that the bet was placed successfully.",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/PlaceBetResponse"
+                },
+                "examples": {
+                  "Win Example": {
+                    "value": {"playerResult":[{"id":null,"type":1,"winAmount":200,"value":null}],"gameResult":{"type":1,"value":9,"isWin":false},"winAmount":200,"balanceAfter":1450.75}
+                  },
+                  "Lose Example": {
+                    "value": {"playerResult":[{"id":null,"type":1,"winAmount":0,"value":null}],"gameResult":{"type":1,"value":8,"isWin":false},"winAmount":0,"balanceAfter":1240.5}
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PlaceBetResponse"
+                },
+                "examples": {
+                  "Win Example": {
+                    "value": {"playerResult":[{"id":null,"type":1,"winAmount":200,"value":null}],"gameResult":{"type":1,"value":9,"isWin":false},"winAmount":200,"balanceAfter":1450.75}
+                  },
+                  "Lose Example": {
+                    "value": {"playerResult":[{"id":null,"type":1,"winAmount":0,"value":null}],"gameResult":{"type":1,"value":8,"isWin":false},"winAmount":0,"balanceAfter":1240.5}
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PlaceBetResponse"
+                },
+                "examples": {
+                  "Win Example": {
+                    "value": {"playerResult":[{"id":null,"type":1,"winAmount":200,"value":null}],"gameResult":{"type":1,"value":9,"isWin":false},"winAmount":200,"balanceAfter":1450.75}
+                  },
+                  "Lose Example": {
+                    "value": {"playerResult":[{"id":null,"type":1,"winAmount":0,"value":null}],"gameResult":{"type":1,"value":8,"isWin":false},"winAmount":0,"balanceAfter":1240.5}
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Indicates that the user is unauthorized to place the bet.",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Operator or Game ID mismatch."
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "BetHistoryModel": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "nullable": true
+          },
+          "type": {
+            "$ref": "#/components/schemas/BetTypeEnum"
+          },
+          "amount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "number": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "isWin": {
+            "type": "boolean"
+          },
+          "createdAt": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false
+      },
+      "BetHistoryResponse": {
+        "type": "object",
+        "properties": {
+          "bets": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/BetHistoryModel"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "BetTypeEnum": {
+        "enum": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12
+        ],
+        "type": "integer",
+        "format": "int32"
+      },
+      "GameResultModel": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "$ref": "#/components/schemas/BetTypeEnum"
+          },
+          "value": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "isWin": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": false
+      },
+      "PlaceBetCommand": {
+        "type": "object",
+        "properties": {
+          "bets": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PlaceBetRequestModel"
+            },
+            "description": "Gets or sets the list of bets to be placed.",
+            "nullable": true
+          },
+          "clientTime": {
+            "type": "integer",
+            "description": "Represents the time when the spin operation was initiated on the client side (in UTC format).",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false,
+        "description": "Command to place a bet"
+      },
+      "PlaceBetRequestModel": {
+        "type": "object",
+        "properties": {
+          "amount": {
+            "type": "integer",
+            "description": "Gets or sets the amount to bet.",
+            "format": "int32"
+          },
+          "number": {
+            "type": "integer",
+            "description": "Gets or sets the number to bet on. This is optional.",
+            "format": "int32",
+            "nullable": true
+          },
+          "type": {
+            "$ref": "#/components/schemas/BetTypeEnum"
+          }
+        },
+        "additionalProperties": false
+      },
+      "PlaceBetResponse": {
+        "type": "object",
+        "properties": {
+          "playerResult": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PlayerResultModel"
+            },
+            "description": "Gets or sets the list of successfully placed bets.",
+            "nullable": true
+          },
+          "gameResult": {
+            "$ref": "#/components/schemas/GameResultModel"
+          },
+          "winAmount": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "balanceAfter": {
+            "type": "number",
+            "format": "double"
+          }
+        },
+        "additionalProperties": false,
+        "description": "Response model for placing a bet."
+      },
+      "PlayerResultModel": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "nullable": true
+          },
+          "type": {
+            "$ref": "#/components/schemas/BetTypeEnum"
+          },
+          "winAmount": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "value": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "ProblemDetails": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "nullable": true
+          },
+          "title": {
+            "type": "string",
+            "nullable": true
+          },
+          "status": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "detail": {
+            "type": "string",
+            "nullable": true
+          },
+          "instance": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": { }
+      },
+      "UserInfoDto": {
+        "type": "object",
+        "properties": {
+          "username": {
+            "type": "string",
+            "nullable": true
+          },
+          "balance": {
+            "type": "number",
+            "format": "double"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "securitySchemes": {
+      "Bearer": {
+        "type": "http",
+        "description": "Please enter token",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    }
+  },
+  "security": [
+    {
+      "Bearer": [ ]
+    }
+  ]
+}
