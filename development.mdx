@@ -1,107 +1,226 @@
+# MyAPI Documentation
+
+## Overview
+This document describes the API endpoints for **MyAPI** (version v3), which provides functionality for retrieving user account details and managing betting operations. The API uses the OpenAPI 3.0.1 specification and requires Bearer token authentication (JWT format) for all requests.
+
 ---
-title: 'Development'
-description: 'Preview changes locally to update your docs'
+
+## Authentication
+All endpoints require a Bearer token for authentication. Include the token in the `Authorization` header as follows:
+
+```
+Authorization: Bearer <your-token>
+```
+
 ---
 
-<Info>
-  **Prerequisite**: Please install Node.js (version 19 or higher) before proceeding. <br />
-  Please upgrade to ```docs.json``` before proceeding and delete the legacy ```mint.json``` file.
-</Info>
+## Endpoints
 
-Follow these steps to install and run Mintlify on your operating system:
+### 1. Get User Account Details
+**GET** `/api/penalty/operator/{operatorId}/game/{gameId}/accounts`
 
-**Step 1**: Install Mintlify:
+#### Summary
+Retrieves user details for a specified user token.
 
-<CodeGroup>
+#### Parameters
+- **operatorId** (path, required, string): Operator ID from the route.
+- **gameId** (path, required, string): Game ID from the route.
 
-  ```bash npm
-  npm i -g mintlify
+#### Responses
+- **200 OK**: User information retrieved successfully.
+  - **Content Types**: `text/plain`, `application/json`, `text/json`
+  - **Schema**: `UserInfoDto`
+    ```json
+    {
+      "username": "string",
+      "balance": number
+    }
+    ```
+  - **Examples**:
+    - **Demo User**: `{"username":"demo-user","balance":1250.75}`
+    - **Zero Balance**: `{"username":"empty-wallet","balance":0}`
+    - **High Roller**: `{"username":"big-player","balance":99999.99}`
+- **400 Bad Request**: Operator or Game ID mismatch.
+- **401 Unauthorized**: Unauthorized access.
+- **404 Not Found**: Account not found.
+
+---
+
+### 2. Get Betting History
+**GET** `/api/penalty/operator/{operatorId}/game/{gameId}/bets`
+
+#### Summary
+Retrieves betting history information for a user.
+
+#### Parameters
+- **operatorId** (path, required, string): Operator ID from the route.
+- **gameId** (path, required, string): Game ID from the route.
+
+#### Responses
+- **200 OK**: Bet history information retrieved successfully.
+  - **Content Types**: `text/plain`, `application/json`, `text/json`
+  - **Schema**: `BetHistoryResponse`
+    ```json
+    {
+      "bets": [
+        {
+          "id": "string",
+          "type": integer,
+          "amount": integer,
+          "number": integer,
+          "isWin": boolean,
+          "createdAt": integer
+        }
+      ]
+    }
+    ```
+  - **Example**:
+    - **Basic History**: `{"bets":[{"id":"79d5ccdac7b53f9a7fd858a0f3eb0c25","type":1,"amount":100,"number":7,"isWin":true,"createdAt":1714500000}]}`
+- **400 Bad Request**: Operator or Game ID mismatch.
+- **401 Unauthorized**: Unauthorized access.
+- **404 Not Found**: Bet history information not found.
+
+---
+
+### 3. Place a Bet
+**POST** `/api/penalty/operator/{operatorId}/game/{gameId}/bets`
+
+#### Summary
+Places a bet for a user.
+
+#### Parameters
+- **operatorId** (path, required, string): Operator ID from the route.
+- **gameId** (path, required, string): Game ID from the route.
+
+#### Request Body
+- **Content Types**: `application/json`, `text/json`, `application/*+json`
+- **Schema**: `PlaceBetCommand`
+  ```json
+  {
+    "bets": [
+      {
+        "amount": integer,
+        "number": integer,
+        "type": integer
+      }
+    ],
+    "clientTime": integer
+  }
   ```
+- **Description**:
+  - `bets`: List of bets to be placed.
+  - `clientTime`: Time when the bet was initiated on the client side (UTC, integer).
 
-```bash yarn
-yarn global add mintlify
+#### Responses
+- **200 OK**: Bet placed successfully.
+  - **Content Types**: `text/plain`, `application/json`, `text/json`
+  - **Schema**: `PlaceBetResponse`
+    ```json
+    {
+      "playerResult": [
+        {
+          "id": "string",
+          "type": integer,
+          "winAmount": integer,
+          "value": integer
+        }
+      ],
+      "gameResult": {
+        "type": integer,
+        "value": integer,
+        "isWin": boolean
+      },
+      "winAmount": integer,
+      "balanceAfter": number
+    }
+    ```
+  - **Examples**:
+    - **Win Example**: `{"playerResult":[{"id":null,"type":1,"winAmount":200,"value":null}],"gameResult":{"type":1,"value":9,"isWin":false},"winAmount":200,"balanceAfter":1450.75}`
+    - **Lose Example**: `{"playerResult":[{"id":null,"type":1,"winAmount":0,"value":null}],"gameResult":{"type":1,"value":8,"isWin":false},"winAmount":0,"balanceAfter":1240.5}`
+- **400 Bad Request**: Operator or Game ID mismatch.
+- **401 Unauthorized**: Unauthorized access.
+- **403 Forbidden**: Forbidden action.
+
+---
+
+## Schemas
+
+### UserInfoDto
+```json
+{
+  "username": "string",
+  "balance": number
+}
 ```
 
-</CodeGroup>
-
-**Step 2**: Navigate to the docs directory (where the `docs.json` file is located) and execute the following command:
-
-```bash
-mintlify dev
+### BetHistoryResponse
+```json
+{
+  "bets": [
+    {
+      "id": "string",
+      "type": integer,
+      "amount": integer,
+      "number": integer,
+      "isWin": boolean,
+      "createdAt": integer
+    }
+  ]
+}
 ```
 
-A local preview of your documentation will be available at `http://localhost:3000`.
-
-### Custom Ports
-
-By default, Mintlify uses port 3000. You can customize the port Mintlify runs on by using the `--port` flag. To run Mintlify on port 3333, for instance, use this command:
-
-```bash
-mintlify dev --port 3333
+### PlaceBetCommand
+```json
+{
+  "bets": [
+    {
+      "amount": integer,
+      "number": integer,
+      "type": integer
+    }
+  ],
+  "clientTime": integer
+}
 ```
 
-If you attempt to run Mintlify on a port that's already in use, it will use the next available port:
-
-```md
-Port 3000 is already in use. Trying 3001 instead.
+### PlaceBetResponse
+```json
+{
+  "playerResult": [
+    {
+      "id": "string",
+      "type": integer,
+      "winAmount": integer,
+      "value": integer
+    }
+  ],
+  "gameResult": {
+    "type": integer,
+    "value": integer,
+    "isWin": boolean
+  },
+  "winAmount": integer,
+  "balanceAfter": number
+}
 ```
 
-## Mintlify Versions
+### BetTypeEnum
+Enum of valid bet types: `[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]`
 
-Please note that each CLI release is associated with a specific version of Mintlify. If your local website doesn't align with the production version, please update the CLI:
-
-<CodeGroup>
-
-```bash npm
-npm i -g mintlify@latest
+### ProblemDetails
+```json
+{
+  "type": "string",
+  "title": "string",
+  "status": integer,
+  "detail": "string",
+  "instance": "string"
+}
 ```
 
-```bash yarn
-yarn global upgrade mintlify
-```
+---
 
-</CodeGroup>
+## Security
+The API uses a Bearer token (JWT format) for authentication. Ensure the token is valid and included in all requests.
 
-## Validating Links
-
-The CLI can assist with validating reference links made in your documentation. To identify any broken links, use the following command:
-
-```bash
-mintlify broken-links
-```
-
-## Deployment
-
-<Tip>
-  Unlimited editors available under the [Pro
-  Plan](https://mintlify.com/pricing) and above.
-</Tip>
-
-If the deployment is successful, you should see the following:
-
-<Frame>
-  <img src="/images/checks-passed.png" style={{ borderRadius: '0.5rem' }} />
-</Frame>
-
-## Code Formatting
-
-We suggest using extensions on your IDE to recognize and format MDX. If you're a VSCode user, consider the [MDX VSCode extension](https://marketplace.visualstudio.com/items?itemName=unifiedjs.vscode-mdx) for syntax highlighting, and [Prettier](https://marketplace.visualstudio.com/items?itemName=esbenp.prettier-vscode) for code formatting.
-
-## Troubleshooting
-
-<AccordionGroup>
-  <Accordion title='Error: Could not load the "sharp" module using the darwin-arm64 runtime'>
-
-    This may be due to an outdated version of node. Try the following:
-    1. Remove the currently-installed version of mintlify: `npm remove -g mintlify`
-    2. Upgrade to Node v19 or higher.
-    3. Reinstall mintlify: `npm install -g mintlify`
-  </Accordion>
-
-  <Accordion title="Issue: Encountering an unknown error">
-  
-    Solution: Go to the root of your device and delete the \~/.mintlify folder. Afterwards, run `mintlify dev` again.
-  </Accordion>
-</AccordionGroup>
-
-Curious about what changed in the CLI version? [Check out the CLI changelog.](https://www.npmjs.com/package/mintlify?activeTab=versions)
+For more details, contact the API provider or refer to the official documentation at [https://x.ai/api](https://x.ai/api).
