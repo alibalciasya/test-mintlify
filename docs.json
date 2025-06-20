@@ -7,17 +7,23 @@
   },
   "navigation": {
      "pages": [
-      "overview"
-    ],
-       "groups": [
-        {
-          "group": "Endpoints",
-          "openapi": {
-         
-            "directory": "api-reference"
+      {
+        "tab": "Guides"        
+      },
+       {
+        "tab": "API Reference",
+        "groups": [
+          {
+            "group": "API Documentation",
+            "pages": [
+              "api-reference/introduction"
+            ]
           }
-        }
-      ]
+        ]
+      }
+    ]
+       
+      
   }
 
 }
