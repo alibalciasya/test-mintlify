@@ -8,7 +8,15 @@
   "navigation": {
      "pages": [
       {
-        "tab": "Guides"        
+        "tab": "Guides"        ,
+          "groups": [
+          {
+            "group": "My Documentation",
+            "pages": [
+              "index"
+            ]
+          }
+        ]
       },
        {
         "tab": "API Reference",
