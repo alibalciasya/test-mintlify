@@ -8,7 +8,16 @@
   "navigation": {
      "pages": [
       "overview"
-    ]
+    ],
+       "groups": [
+        {
+          "group": "Endpoints",
+          "openapi": {
+         
+            "directory": "api-reference"
+          }
+        }
+      ]
   }
 
 }
