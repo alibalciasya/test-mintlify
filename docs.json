@@ -1,24 +1,24 @@
 {
   "$schema": "https://mintlify.com/docs.json",
   "theme": "mint",
-  "name": "Your Docs",
-  "colors": {
+  "name": "Asyalogic",
+    "colors": {
     "primary": "#ff0000"
   },
   "navigation": {
-     "pages": [
+    "tabs": [
       {
-        "tab": "Guides"        ,
-          "groups": [
+        "tab": "Guides",
+        "groups": [
           {
-            "group": "My Documentation",
+            "group": "Get Started",
             "pages": [
               "index"
             ]
           }
         ]
       },
-       {
+      {
         "tab": "API Reference",
         "groups": [
           {
@@ -30,8 +30,5 @@
         ]
       }
     ]
-       
-      
   }
-
 }
